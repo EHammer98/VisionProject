@@ -1,9 +1,12 @@
+from os.path import exists
+import os
+import sys
+sys.path.insert(1, "\\")
 from cnn import CNN
 from img import ImgProcess
 from gui import MainWindow
+67
 
-import os
-from os.path import exists
 
 if __name__ == "__main__":
 
@@ -36,9 +39,11 @@ if __name__ == "__main__":
                 ai.test_batch_img_add(dir + "/" + k)
                 win.add_img(dir + "/" + k)
 
-    win.create_button("Add image to list", 20, 5, add_img)
-    win.create_button("Load images from folder", 20, 5, add_folder)
-    win.create_button("Test model", 20, 5, test_model)
+    #to get the current working directory
+    directory = os.getcwd()
+    win.create_button("Add image to list", 50, 50, add_img, (directory + "\\addImage.png"), "Add just a single image from your system")
+    win.create_button("Load images from folder", 50, 50, add_folder, (directory + "\\addImageFolder.png"), "Select folder with images from your system")
+    win.create_button("Test model", 50, 50, test_model, (directory + "\\testImage.png"), "Perform testing and show results")
 
     ## Start main loop
     win.run()
