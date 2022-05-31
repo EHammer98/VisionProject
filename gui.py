@@ -24,8 +24,6 @@ class MainWindow:
         self.win.geometry( str(self.CONST.WIN_WIDTH) + "x" + str(self.CONST.WIN_HEIGHT) ) # Setting the size of the window
         self.win.resizable(False, False) # Disable window resizing
         self.win.title("Hand Gesture Detector") # Program titel
-        self.style = ttk.Style(self.win) # Set style
-        self.style.theme_use('classic') # Set theme for program   
         directory = os.getcwd() # Get local directory
         self.win.iconphoto(False, tk.PhotoImage(file= (directory + '\\icon.png'))) # Get logo for program
         self.buttons = []
@@ -34,6 +32,20 @@ class MainWindow:
         self.txtlabels = []
         self.imglabels = []
         self.imgfiles = []
+
+        for i in range(5):
+            self.win.button = Button(self.win, text = "Button {0}".format(i))
+            self.win.button.grid(row=6, column=i, sticky=W+E, command = add_img)      
+
+
+
+            
+        self.win.Frame1 = Frame(self.win, bg="red")
+        self.win.Frame1.grid(row = 0, column = 0, rowspan = 3, columnspan = 2, sticky = W+E+N+S) 
+        self.win.Frame2 = Frame(self.win, bg="blue")
+        self.win.Frame2.grid(row = 2, column = 0, rowspan = 3, columnspan = 2, sticky = W+E+N+S)
+        self.win.Frame3 = Frame(self.win, bg="green")
+        self.win.Frame3.grid(row = 0, column = 2, rowspan = 6, columnspan = 3, sticky = W+E+N+S)
 
 
     def run(self) -> None:
@@ -49,8 +61,9 @@ class MainWindow:
         txt.append(command)  
         tip.append(tooltip)
         img.append(tk.PhotoImage(file=im) )
-        self.buttons.append(tk.Button(self.win, text = text, width = w, height = h, command = command))
+        self.buttons.append(tk.Button(self.win, text = text, width = w, height = h, command = command, borderwidth=4, relief="groove"))
         # self.buttons[len(self.buttons) - 1].place(x = x, y = y)
+        
         col = len(self.buttons) - 1
         self.buttons[len(self.buttons) - 1].grid(row = self.CONST.BTN_ROW, column = col,
                                                 padx = self.CONST.STD_PADX, pady = self.CONST.STD_PADY)
@@ -92,15 +105,15 @@ class MainWindow:
         column = (len(self.imgfiles) - 1) % self.CONST.IMG_PER_ROW
 
         self.imglabels[index].grid(row = row, column = column, 
-                                   padx = self.CONST.STD_PADX, pady = self.CONST.STD_PADY)
+                                   padx = self.CONST.STD_PADX, pady = self.CONST.STD_PADY, columnspan = 4)
 
     def add_img_label(self, text, img_index):
-        self.txtlabels.append( tk.Label( self.win, text = text, relief = tk.RAISED) )
+        self.txtlabels.append( tk.Label( self.win, text = text, font=("Bahnschrift", 14), borderwidth=2, relief="ridge") )
 
         row = self.CONST.IMGLABEL_ROW + math.floor( (len(self.txtlabels) - 1) / self.CONST.IMG_PER_ROW ) * 2
         column = (len(self.txtlabels) - 1) % self.CONST.IMG_PER_ROW        
         self.txtlabels[img_index].grid(row = row, column = column,
-                                       padx = self.CONST.STD_PADX, pady = self.CONST.STD_PADY)
+                                       padx = self.CONST.STD_PADX, pady = self.CONST.STD_PADY, columnspan = 4)
 
 
 
