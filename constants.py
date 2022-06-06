@@ -18,5 +18,5 @@ class GUI_CONSTANTS:
 class CNN_CONSTANTS:
     def __init__(self):
         self.IMG_TARGET_SIZE = [320, 120]
-        self.IMG_CATG_NAME = ["Thumbs-up", "Thumbs-down", "High five", "-", "-", "-", "-", "-", "-", "-", "Uncertain"]
+        self.IMG_CATG_NAME = ["Thumbsup", "Finger gun", "Peace", "Thumbsdown", "Left", "Right", "Up", "Down", "Fist", "High five", "Uncertain"]
         self.UNCERTAINTY_THRESHOLD = 0.2

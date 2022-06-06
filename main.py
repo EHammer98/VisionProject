@@ -4,14 +4,17 @@ import sys
 sys.path.insert(1, "\\")
 from cnn import CNN
 from img import ImgProcess
+import ctbaw
 import tkinter as tk
 import os
 from tkinter import *
 from tkinter import ttk 
 from idlelib.tooltip import Hovertip
 from tkinter import filedialog
-from PIL import Image # For handling the images
+from PIL import Image, ImageTk
 from constants import GUI_CONSTANTS
+import imutils
+import cv2
 
 import math
 
@@ -20,15 +23,13 @@ from matplotlib import image
 
 if __name__ == "__main__":
 
-    ai = CNN('C:\\Users\\timvd\\Documents\\Programming\\Python\\Tensorflow\\handgestures\\data\\leapGestRecog\\00\\',
-             'C:\\Users\\timvd\\Documents\\Programming\\Python\\Tensorflow\\handgestures\\data\\leapGestRecog\\0')
+    ai = CNN('G:\\OneDrive\\OneDrive - Avans Hogeschool\\BLOK8\\PROJECT\\Data\\Handgestures3\\00\\',
+             'G:\\OneDrive\\OneDrive - Avans Hogeschool\\BLOK8\\PROJECT\\Data\\Handgestures3\\0')
 
     img = []
     dir = ""
 
     ai.create_model("handgestures")
-
-
 
 state = 0
 
@@ -36,13 +37,9 @@ class MainWindow:
     def __init__(self) -> None:
 
   
-
-
         self.CONST = GUI_CONSTANTS()
 
         self.win = tk.Tk() # Creating the main window and storing the window object in 'win'
-
-
 
         #self.win.geometry( str(self.CONST.WIN_WIDTH) + "x" + str(self.CONST.WIN_HEIGHT) ) # Setting the size of the window
         self.win.resizable(False, False) # Disable window resizing
@@ -52,6 +49,7 @@ class MainWindow:
         self.txtlabels = []
         self.imglabels = []
         self.imgfiles = []
+        canvas = Canvas(self.win, width = 50, height = 50)  
 
         frame0 = LabelFrame(self.win, text="Images")
         
@@ -79,9 +77,20 @@ class MainWindow:
                                                 title = "Select a file",
                                                 filetypes = (("PNG images", "*.png*"),
                                                             ("All files", "*.*"))) 
-                ai.test_batch_img_add(dir)
-                #self.win.add_img_win(dir)
-                self.imgfiles.append(tk.PhotoImage(file = dir).subsample(3, 3))
+                print("dir: " + str(dir))
+                ctbaw.convertImage(dir) # Convert color image to black and white  
+                l = len(dir) # Get length of string 
+                fileName = dir[l - 7:].replace('/', '') # Get last 7 char of string and remove '/'    
+                newPath = dir.replace(fileName, '')
+                ai.test_batch_img_add("testdata/" + fileName)
+
+                image_ = cv2.imread(dir)
+
+                resizedIm = imutils.resize(image_, width=75, height=94)
+                cv2.imwrite(newPath + "/resized/" + fileName, resizedIm)
+
+                self.imgfiles.append(tk.PhotoImage(file = (newPath + "/resized/" + fileName)))
+                #self.imgfiles.append(tk.PhotoImage(file = dir).subsample(3, 3))
                 self.imglabels.append( tk.Label(frame0, image = self.imgfiles[len(self.imgfiles) - 1]) )
 
                 index = len(self.imglabels) - 1
@@ -121,20 +130,32 @@ class MainWindow:
 
 
                 dir = filedialog.askdirectory(initialdir = "./", title = "Select a folder")
-                if (exists(dir)):
+                if (exists(dir)):                                                                                                         
                     for k in os.listdir(dir):
-                        ai.test_batch_img_add(dir + "/" + k)
-                        #self.win.add_img(dir + "/" + k) 
-                        self.imgfiles.append(tk.PhotoImage(file = (dir + "/" + k)).subsample(3, 3))
-                        self.imglabels.append( tk.Label(frame0, image = self.imgfiles[len(self.imgfiles) - 1]) )
+                        #ai.test_batch_img_add(dir + "/" + k)
+                        if (k.find('resized') == -1):
+                            
+                            filePath = (dir + "/" + k)
+                            
+                            ctbaw.convertImage(filePath) # Convert color image to black and white  
+                            ai.test_batch_img_add("testdata" + "/bw" + k) 
 
-                        index = len(self.imglabels) - 1
+                            image_ = cv2.imread(filePath)
+                            resizedIm = imutils.resize(image_, width=75, height=94)
+                            cv2.imwrite(dir + "/resized/" + k, resizedIm)
 
-                        row = self.CONST.IMG_ROW + math.floor( (len(self.imgfiles) - 1) / self.CONST.IMG_PER_ROW ) * 2
-                        column = (len(self.imgfiles) - 1) % self.CONST.IMG_PER_ROW
+                            self.imgfiles.append(tk.PhotoImage(file = (dir + "/resized/" + k)))
+                            #self.imgfiles.append(tk.PhotoImage(dir + "/resized/" + k))
+                            self.imglabels.append( tk.Label(frame0, image = self.imgfiles[len(self.imgfiles) - 1]) )
 
-                        self.imglabels[index].grid(row = row, column = column, 
-                                                padx = self.CONST.STD_PADX, pady = self.CONST.STD_PADY)        
+                            index = len(self.imglabels) - 1
+
+                            row = self.CONST.IMG_ROW + math.floor( (len(self.imgfiles) - 1) / self.CONST.IMG_PER_ROW ) * 2
+                            column = (len(self.imgfiles) - 1) % self.CONST.IMG_PER_ROW
+
+                            self.imglabels[index].grid(row = row, column = column, 
+                                                    padx = self.CONST.STD_PADX, pady = self.CONST.STD_PADY)     
+                                    
 
                                                         
 

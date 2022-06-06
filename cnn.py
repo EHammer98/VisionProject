@@ -80,16 +80,20 @@ class CNN:
         x_train,x_further,y_train,y_further = train_test_split(self.img_data,self.img_catg,test_size = 0.2)
         x_validate,self.test_img_data,y_validate,self.test_img_catg = train_test_split(x_further,y_further,test_size = 0.5)
 
-        # Add layers to CNN for image analysation
+# Add layers to CNN for image analysation
         self.model = models.Sequential()
         self.model.add(layers.Conv2D(32, (5, 5), strides=(2, 2), activation='relu', input_shape=(self.CONST.IMG_TARGET_SIZE[1], self.CONST.IMG_TARGET_SIZE[0], 1))) 
         self.model.add(layers.MaxPooling2D((2, 2)))
         self.model.add(layers.Conv2D(64, (3, 3), activation='relu')) 
+        self.model.add(layers.Conv2D(64, (3, 3), activation='relu')) 
         self.model.add(layers.MaxPooling2D((2, 2)))
-        self.model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+        self.model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+        self.model.add(layers.MaxPooling2D((2, 2)))
+        self.model.add(layers.Conv2D(256, (3, 3), activation='relu'))
         self.model.add(layers.MaxPooling2D((2, 2)))
         self.model.add(layers.Flatten())
-        self.model.add(layers.Dense(128, activation='relu'))
+        self.model.add(layers.Dense(180, activation='relu'))
+        self.model.add(layers.Dropout(0.10))
         self.model.add(layers.Dense(10, activation='softmax'))
 
         # Train and compile CNN model (might take a while to complete)
